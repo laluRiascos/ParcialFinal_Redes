@@ -76,6 +76,29 @@ exports.consultarPropiedadesDisponibles = async (req, res) => {
   }
 };
 
+
+// Controlador para consultar propiedades disponibles por ID (ahora usando POST)
+exports.consultarPropiedadDisponiblePorId = async (req, res) => {
+  const { adminNombreUsuario, adminContraseña, id_hab } = req.body; // Usar req.body en lugar de req.params
+
+  // Verificación del rol de arrendatario
+  if (!await verificarRol(adminNombreUsuario, adminContraseña, 'arrendatario')) {
+    return res.status(403).json({ mensaje: 'Permiso denegado. Solo el arrendatario puede consultar propiedades disponibles.' });
+  }
+
+  try {
+    // Busca la propiedad específica por id_hab
+    const propiedad = await Propiedad.consultarHabitacionDisponiblePorId(id_hab);
+    if (!propiedad) {
+      return res.status(404).json({ mensaje: 'Propiedad no encontrada o no está disponible.' });
+    }
+    res.status(200).json(propiedad);
+  } catch (error) {
+    console.error("Error al consultar propiedad disponible por ID:", error.message);
+    res.status(500).json({ error: error.message });
+  }
+};
+
 // Controlador para eliminar una propiedad (solo para propietario)
 exports.eliminarPropiedad = async (req, res) => {
   const { id } = req.params;

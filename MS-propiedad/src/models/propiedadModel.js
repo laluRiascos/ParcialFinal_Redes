@@ -24,6 +24,19 @@ exports.consultarHabitacionesDisponibles = async () => {
   return rows;
 };
 
+// Función en el modelo Propiedad para consultar una propiedad disponible por id_hab
+exports.consultarHabitacionDisponiblePorId = async (id_hab) => {
+  try {
+    const [propiedad] = await pool.query(
+      'SELECT * FROM habitaciones WHERE id_hab = ? AND estado = "Disponible"', 
+      [id_hab]
+    );
+    return propiedad || null;
+  } catch (error) {
+    throw error;
+  }
+};
+
 // Función para eliminar una propiedad por ID
 exports.eliminarHabitacion = async (id) => {
   await pool.query('DELETE FROM habitaciones WHERE id_hab = ?', [id]);

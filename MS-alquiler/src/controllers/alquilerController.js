@@ -34,53 +34,13 @@ async function verificarRol(nombreUsuario, contrasena, rolNecesario) {
         return null; // Devuelve null en caso de error
     }
   }
-  
 
-
-// Controlador para crear un alquiler (solo para "arrendatario")
+// Controlador para crear un alquiler (solo para arrendatarios)
 exports.crearAlquiler = async (req, res) => {
-    const { adminNombreUsuario, adminContrasena, id_prop, fecha_inicio } = req.body;
 
-    try {
-        // Verificar el rol de arrendatario y obtener id_arren
-        const arrendatario = await verificarRol(adminNombreUsuario, adminContrasena, 'arrendatario');
-        if (!arrendatario) {
-            return res.status(403).json({ mensaje: 'Permiso denegado. Solo arrendatarios pueden realizar esta acción.' });
-        }
-        const id_arren = arrendatario.id; // Asigna el id del arrendatario
-
-        // Obtener id_prop e id_hab de la propiedad
-        try {
-            const propiedadResponse = await axios.get(`http://localhost:3001/api/usuarios/${id_prop}`);
-            const propiedad = propiedadResponse.data;
-
-            // Asegurar que se obtuvieron los datos esperados de la propiedad
-            if (!propiedad || !propiedad.id_hab || !propiedad.id_prop) {
-                return res.status(404).json({ mensaje: 'Propiedad no encontrada o datos incompletos.' });
-            }
-
-            const id_hab = propiedad.id_hab; // Asigna el id de la habitación
-            const id_prop_from_user = propiedad.id_prop; // Asigna el id del propietario desde el microservicio de usuario
-
-            // Crear el alquiler con los IDs obtenidos (id_alq generado automáticamente por la base de datos)
-            const nuevoAlquiler = await Alquiler.crearAlquiler(id_prop_from_user, id_arren, id_hab, fecha_inicio);
-
-            // Comunicación con microservicio de propiedades para actualizar el estado de la habitación
-            await axios.patch(`http://localhost:3001/api/propiedades/${id_hab}`, { estado: 'No Disponible' });
-
-            // Enviar respuesta con los datos del nuevo alquiler creado
-            res.status(201).json(nuevoAlquiler);
-        } catch (error) {
-            console.error("Error al obtener la propiedad:", error.message);
-            res.status(500).json({ error: error.message });
-        }
-    } catch (error) {
-        console.error("Error al crear el alquiler:", error.message);
-        res.status(500).json({ error: error.message });
-    }
 };
 
-  
+
 // Controlador para consultar todos los alquileres (solo para "administrador")
 exports.consultarAlquileres = async (req, res) => {
     const { adminNombreUsuario, adminContrasena } = req.body;
