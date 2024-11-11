@@ -6,16 +6,16 @@ const pool = mysql.createPool({
   host: 'localhost',
   user: 'root',
   password: '',
-  database: 'propiedades_db',
+  database: 'habitaciones_db',
 });
 
 // Función para crear una propiedad
-exports.crearHabitacion = async (ciudad, descripcion, id_prop, costo, estado) => {
+exports.crearHabitacion = async (ciudad, descripcion, id_prop, nombre_prop, costo, estado) => {
   const [result] = await pool.query(
-    'INSERT INTO habitaciones (ciudad, descripcion, id_prop, costo, estado) VALUES (?, ?, ?, ?, ?)',
-    [ciudad, descripcion, id_prop, costo, estado]
+    'INSERT INTO habitaciones (ciudad, descripcion, id_prop, nombre_prop, costo, estado) VALUES (?, ?, ?, ?, ?, ?)',
+    [ciudad, descripcion, id_prop, nombre_prop, costo, estado]
   );
-  return { id: result.insertId, ciudad, descripcion, id_prop, costo, estado };
+  return { id: result.insertId, ciudad, descripcion, id_prop, nombre_prop, costo, estado };
 };
 
 // Función para consultar propiedades disponibles
@@ -37,8 +37,17 @@ exports.consultarHabitacionDisponiblePorId = async (id_hab) => {
   }
 };
 
-// Función para eliminar una propiedad por ID
-exports.eliminarHabitacion = async (id) => {
-  await pool.query('DELETE FROM habitaciones WHERE id_hab = ?', [id]);
-};
+// Función para actualizar el estado de una habitación
+exports.actualizarEstadoHabitacion = async (id_hab, nuevoEstado) => {
+  const [result] = await pool.query(
+    'UPDATE habitaciones SET estado = ? WHERE id_hab = ?',
+    [nuevoEstado, id_hab]
+  );
+  
+  if (result.affectedRows === 0) {
+    throw new Error('Habitación no encontrada o no se pudo actualizar');
+  }
 
+  // Retorna la habitación actualizada
+  return { id_hab, estado: nuevoEstado };
+};

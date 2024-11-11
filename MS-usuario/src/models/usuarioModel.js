@@ -31,11 +31,6 @@ exports.consultarUsuarioPorId = async (id) => {
   return rows[0];
 };
 
-// Función para eliminar un usuario
-exports.eliminarUsuario = async (id) => {
-  await pool.query(`DELETE FROM usuarios WHERE id_usu = ?`, [id]);
-};
-
 // Función para validar credenciales de un usuario sin encriptación
 exports.validarCredenciales = async (usuario, password) => {
   console.log("Buscando usuario en la base de datos:", usuario);

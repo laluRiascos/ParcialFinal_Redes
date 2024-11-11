@@ -10,12 +10,12 @@ const pool = mysql.createPool({
 });
 
 // Función para crear un alquiler
-exports.crearAlquiler = async (id_prop, id_arren, id_hab, fecha_inicio) => {
+exports.crearAlquiler = async (id_prop, nombre_prop, nombre_arren, fecha_inicio) => {
   const [result] = await pool.query(
-    'INSERT INTO alquileres (id_prop, id_arren, id_hab, fecha_inicio) VALUES (?, ?, ?, ?)',
-    [id_prop, id_arren, id_hab, fecha_inicio]
+    'INSERT INTO alquileres (id_prop, nombre_prop, nombre_arren, fecha_inicio) VALUES (?, ?, ?, ?)',
+    [id_prop, nombre_prop, nombre_arren, fecha_inicio]
   );
-  return { id: result.insertId, id_prop, id_arren, id_hab, fecha_inicio };
+  return { id: result.insertId, id_prop, nombre_prop, nombre_arren, fecha_inicio };
 };
 
 // Función para consultar todos los alquileres

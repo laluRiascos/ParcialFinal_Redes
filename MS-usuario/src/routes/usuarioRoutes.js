@@ -6,6 +6,5 @@ router.post('/usuarios/validar', usuarioController.validarCredenciales); // Vali
 router.post('/usuarios', usuarioController.crearUsuario); // Crear usuario
 router.get('/usuarios', usuarioController.consultarUsuarios); // Obtener todos los usuarios
 router.get('/usuarios/:id', usuarioController.consultarUsuarioPorId); // Consultar usuario por ID
-router.delete('/usuarios/:id', usuarioController.eliminarUsuario); // Eliminar usuario
 
 module.exports = router;

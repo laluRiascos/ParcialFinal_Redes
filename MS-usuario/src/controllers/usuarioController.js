@@ -3,11 +3,11 @@ const Usuario = require('../models/usuarioModel');
 
 //Función para para crear un usuario (solo administradores)
 exports.crearUsuario = async (req, res) => {
-  const { adminNombreUsuario, adminContrasena, nombreCompleto, usuario, password, rol } = req.body;
+  const { usuarioAdmin, passwordAdmin, nombreCompleto, usuario, password, rol } = req.body;
 
   try {
     // Validar credenciales del administrador
-    const adminUser = await Usuario.validarCredenciales(adminNombreUsuario, adminContrasena);
+    const adminUser = await Usuario.validarCredenciales(usuarioAdmin, passwordAdmin);
 
     if (!adminUser || adminUser.rol !== 'administrador') {
       return res.status(403).json({ error: 'Acceso denegado: Se requiere rol de administrador' });
@@ -25,11 +25,11 @@ exports.crearUsuario = async (req, res) => {
 
 // Función para consultar todos los usuarios (solo administradores)
 exports.consultarUsuarios = async (req, res) => {
-  const { adminNombreUsuario, adminContrasena } = req.body; // Recibe las credenciales de administrador desde los headers
+  const { usuarioAdmin, passwordAdmin } = req.body; // Recibe las credenciales de administrador desde los headers
 
   try {
     // Valida las credenciales del administrador
-    const adminUser = await Usuario.validarCredenciales(adminNombreUsuario, adminContrasena);
+    const adminUser = await Usuario.validarCredenciales(usuarioAdmin, passwordAdmin);
 
     // Verifica si el usuario es administrador
     if (!adminUser || adminUser.rol !== 'administrador') {
@@ -49,11 +49,11 @@ exports.consultarUsuarios = async (req, res) => {
 // Función para consultar un usuario por ID (solo administradores)
 exports.consultarUsuarioPorId = async (req, res) => {
   const { id } = req.params;
-  const { adminNombreUsuario, adminContrasena } = req.body; // Recibe las credenciales de administrador en el cuerpo
+  const { usuarioAdmin, passwordAdmin } = req.body; // Recibe las credenciales de administrador en el cuerpo
 
   try {
     // Valida credenciales del administrador
-    const adminUser = await Usuario.validarCredenciales(adminNombreUsuario, adminContrasena);
+    const adminUser = await Usuario.validarCredenciales(usuarioAdmin, passwordAdmin);
 
     // Verifica si el usuario es administrador
     if (!adminUser || adminUser.rol !== 'administrador') {
@@ -69,30 +69,6 @@ exports.consultarUsuarioPorId = async (req, res) => {
     }
   } catch (error) {
     console.error("Error al consultar usuario por ID:", error.message);
-    res.status(500).json({ error: error.message });
-  }
-};
-
-
-// Función para eliminar un usuario (solo administradores)
-exports.eliminarUsuario = async (req, res) => {
-  const { id } = req.params;
-  const { adminNombreUsuario, adminContrasena } = req.body; // Recibe las credenciales de administrador en el cuerpo
-
-  try {
-    // Valida credenciales del administrador
-    const adminUser = await Usuario.validarCredenciales(adminNombreUsuario, adminContrasena);
-
-    // Verifica si el usuario es administrador
-    if (!adminUser || adminUser.rol !== 'administrador') {
-      return res.status(403).json({ error: 'Acceso denegado: Se requiere rol de administrador' });
-    }
-
-    // Si la validación es exitosa y el rol es de administrador, elimina el usuario por ID
-    await Usuario.eliminarUsuario(id);
-    res.status(200).json({ mensaje: 'Usuario eliminado correctamente' });
-  } catch (error) {
-    console.error("Error al eliminar usuario:", error.message);
     res.status(500).json({ error: error.message });
   }
 };
