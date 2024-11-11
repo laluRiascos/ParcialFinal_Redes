@@ -5,6 +5,10 @@ const Usuario = require('../models/usuarioModel');
 exports.crearUsuario = async (req, res) => {
   const { usuarioAdmin, passwordAdmin, nombreCompleto, usuario, password, rol } = req.body;
 
+  if (rol !== "administrador" && rol !== "propietario" && rol !== "arrendatario"){
+    return res.status(404).json({ mensaje: 'El rol no es valido' });
+}
+
   try {
     // Validar credenciales del administrador
     const adminUser = await Usuario.validarCredenciales(usuarioAdmin, passwordAdmin);
@@ -36,7 +40,7 @@ exports.consultarUsuarios = async (req, res) => {
       return res.status(403).json({ error: 'Acceso denegado: Se requiere rol de administrador' });
     }
 
-    // Si la validación es exitosa y el rol es de administrador, consulta todos los usuarios
+    // Si es administrador, continúa con la consulta de todos los usuarios
     const usuarios = await Usuario.consultarUsuarios();
     res.status(200).json(usuarios);
   } catch (error) {
@@ -60,7 +64,7 @@ exports.consultarUsuarioPorId = async (req, res) => {
       return res.status(403).json({ error: 'Acceso denegado: Se requiere rol de administrador' });
     }
 
-    // Si la validación es exitosa y el rol es de administrador, consulta el usuario por ID
+    // Si es administrador, continúa con la consulta del usuario por ID
     const usuario = await Usuario.consultarUsuarioPorId(id);
     if (usuario) {
       res.status(200).json(usuario);
@@ -75,7 +79,7 @@ exports.consultarUsuarioPorId = async (req, res) => {
 
 // Controlador para validar credenciales
 exports.validarCredenciales = async (req, res) => {
-  console.log("Cuerpo de la solicitud (req.body):", req.body);  // Verifica el contenido de req.body
+  console.log("Cuerpo de la solicitud (req.body):", req.body); 
 
   // Ajusta los nombres para coincidir con los datos en el req.body
   const { usuario, password } = req.body;

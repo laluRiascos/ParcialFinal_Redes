@@ -5,7 +5,7 @@ require('dotenv').config();
 const pool = mysql.createPool({
   host: 'localhost',
   user: 'root',
-  password: '',
+  password: 'root',
   database: 'habitaciones_db',
 });
 
@@ -24,7 +24,7 @@ exports.consultarHabitacionesDisponibles = async () => {
   return rows;
 };
 
-// Función en el modelo Propiedad para consultar una propiedad disponible por id_hab
+// Función para consultar una propiedad disponible por id_hab
 exports.consultarHabitacionDisponiblePorId = async (id_hab) => {
   try {
     const [propiedad] = await pool.query(

@@ -1,7 +1,7 @@
 const Habitaciones = require('../models/habitacionModel');
 const axios = require('axios');
 
-// Función para verificar el rol mediante credenciales
+// Función con axios para verificar el rol mediante credenciales
 async function verificarRol(nombreUsuario, contrasena, rolNecesario) {
   try {
       // Imprime los datos antes de la solicitud
@@ -35,13 +35,13 @@ async function verificarRol(nombreUsuario, contrasena, rolNecesario) {
   }
 }
 
-// Controlador para crear una habitación
+// Función para crear una habitacion (solo propietario)
 exports.crearHabitacion = async (req, res) => {
-    const { usuarioArr, passwordArr, ciudad, descripcion, costo, estado } = req.body;
+    const { usuarioProp, passwordProp, ciudad, descripcion, costo, estado } = req.body;
 
     try {
         // 1. Verificar el rol del usuario y obtener su id y nombre completo
-        const usuario = await verificarRol(usuarioArr, passwordArr, 'propietario');
+        const usuario = await verificarRol(usuarioProp, passwordProp, 'propietario');
         
         if (!usuario) {
             return res.status(403).json({ mensaje: 'Permiso denegado. Solo el propietario puede crear habitaciones.' });
@@ -62,6 +62,7 @@ exports.crearHabitacion = async (req, res) => {
 };
 
 
+// Función para consultar todas las habitaciones disponibles (solo arrendatario)
 exports.consultarHabitacionesDisponibles = async (req, res) => {
   const { usuario, password } = req.body;
 
@@ -78,8 +79,10 @@ exports.consultarHabitacionesDisponibles = async (req, res) => {
   }
 };
 
+
+// Función para consultar una habitacion por ID (solo arrendatario)
 exports.consultarHabitacionDisponiblePorId = async (req, res) => {
-  const { usuario, password } = req.body; // Obtener usuario y contraseña de la query
+  const { usuario, password } = req.body; // Obtener usuario y contraseña
   const id_hab = req.params.id_hab; // Obtener id_hab de los params
 
   if (!await verificarRol(usuario, password, 'arrendatario')) {
@@ -98,7 +101,7 @@ exports.consultarHabitacionDisponiblePorId = async (req, res) => {
   }
 };
 
-// Función para actualizar el estado de una habitación a "No Disponible"
+// Función para actualizar el estado de una habitación a "No Disponible" (solo arrendatario)
 exports.actualizarHabitacion = async (req, res) => {
     const { usuario, password, estado } = req.body; // Obtener usuario y contraseña del cuerpo de la solicitud
     const id_hab = req.params.id_hab; // Obtener id_hab de los params

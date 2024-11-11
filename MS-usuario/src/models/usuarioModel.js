@@ -6,7 +6,7 @@ require('dotenv').config();
 const pool = mysql.createPool({
   host: 'localhost',
   user: 'root',
-  password: '',
+  password: 'root',
   database: 'usuarios_db'
 });
 
@@ -31,7 +31,7 @@ exports.consultarUsuarioPorId = async (id) => {
   return rows[0];
 };
 
-// Función para validar credenciales de un usuario sin encriptación
+// Función para validar credenciales de un usuario
 exports.validarCredenciales = async (usuario, password) => {
   console.log("Buscando usuario en la base de datos:", usuario);
   
